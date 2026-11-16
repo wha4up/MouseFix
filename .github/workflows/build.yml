@@ -1,0 +1,30 @@
+name: Build MouseFix
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build x64 Release
+        run: msbuild MouseFix/MouseFix.sln /m /p:Configuration=Release /p:Platform=x64
+
+      - name: Upload executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: MouseFix-x64
+          path: MouseFix/MouseFix/bin/x64/Release/MouseFix-x64.exe
+          if-no-files-found: error
+          retention-days: 7
